@@ -12,14 +12,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import br.com.etechoracio.etec_viagem.entity.Viagem;
 import br.com.etechoracio.etec_viagem.repository.ViagemRepository;
+import br.com.etechoracio.etec_viagem.service.ViagemService;
 
+@RestController
+@RequestMapping("/viagem")
 public class ViagemController {
 
 	@Autowired
 	private ViagemRepository repository;
+	
+	@Autowired
+	private ViagemService service;
 	
 	private List<Viagem> dados = new ArrayList<Viagem>();
 	
@@ -30,34 +38,34 @@ public class ViagemController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Viagem> buscarPorId(@PathVariable Integer id) {
+	public ResponseEntity<Viagem> buscarPorId(@PathVariable Long id) {
 		
-		Optional<Viagem> tipo = repository.findById(id);
-		if(tipo.isPresent()) {
-			ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.ok(tipo.get());
+		Optional<Viagem> existe = service.buscarPorId(id);
+		return existe.isPresent() ? ResponseEntity.ok(existe.get())
+								  : ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
-	public ResponseEntity<Viagem> inserir(@RequestBody Viagem viagem)
+	public ResponseEntity<Viagem> inserir(@RequestBody Viagem obj)
 	{
-		repository.save(viagem);
-		return ResponseEntity.ok(viagem);
+		service.inserir(obj);
+		return ResponseEntity.ok(obj);
 	}
 	
 	@PutMapping("/{id}")
-	public void atualizar(@PathVariable Integer id, @RequestBody Viagem viagem) 
+	public ResponseEntity<Viagem> atualizar(@PathVariable Long id, 
+							@RequestBody Viagem viagem) 
 	{
-		boolean existe = repository.existsById(id);
-		if(existe)
+		Optional<Viagem> existe = service.atualizar(id, viagem);
+		if(!existe.isPresent())
 		{
-			repository.save(viagem);
+			return ResponseEntity.notFound().build();
 		}
+		return ResponseEntity.ok(viagem);
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Integer> atualizar(@PathVariable Integer id) 
+	public ResponseEntity<Long> atualizar(@PathVariable Long id) 
 	{
 		 repository.deleteById(id);
 		 return ResponseEntity.ok(id);

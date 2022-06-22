@@ -2,6 +2,8 @@ package br.com.etechoracio.etec_viagem.controller;
 
 import br.com.etechoracio.etec_viagem.entity.Gasto;
 import br.com.etechoracio.etec_viagem.repository.GastoRepository;
+import br.com.etechoracio.etec_viagem.service.GastoService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,12 +16,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequestMapping("/gasto")
 public class GastoController {
 
 	@Autowired
 	private GastoRepository repository;
 	
+	private GastoService service;
 	private List<Gasto> dados = new ArrayList<Gasto>();
 	
 	@GetMapping
@@ -27,36 +34,35 @@ public class GastoController {
 		dados = repository.findAll();
 		return dados;
 	}
-	
+	 
 	@GetMapping("/{id}")
-	public ResponseEntity<Gasto> buscarPorId(@PathVariable Integer id) {
+	public ResponseEntity<Gasto> buscarPorId(@PathVariable Long id) {
 		
-		Optional<Gasto> tipo = repository.findById(id);
-		if(tipo.isPresent()) {
-			ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.ok(tipo.get());
+		Optional<Gasto> existe = service.buscarPorId(id);
+		return existe.isPresent() ? ResponseEntity.ok(existe.get())
+								  : ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
-	public ResponseEntity<Gasto> inserir(@RequestBody Gasto gasto)
+	public ResponseEntity<Gasto> inserir(@RequestBody Gasto obj)
 	{
-		repository.save(gasto);
-		return ResponseEntity.ok(gasto);
+		service.inserir(obj);
+		return ResponseEntity.ok(obj);
 	}
 	
 	@PutMapping("/{id}")
-	public void atualizar(@PathVariable Integer id, @RequestBody Gasto gasto) 
+	public ResponseEntity<Gasto> atualizar(@PathVariable Long id, @RequestBody Gasto gasto) 
 	{
-		boolean existe = repository.existsById(id);
-		if(existe)
+		Optional<Gasto> existe = service.atualizar(id, gasto);
+		if(!existe.isPresent())
 		{
-			repository.save(gasto);
+			return ResponseEntity.notFound().build();
 		}
+		return ResponseEntity.ok(gasto);
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Integer> atualizar(@PathVariable Integer id) 
+	public ResponseEntity<Long> atualizar(@PathVariable Long id) 
 	{
 		 repository.deleteById(id);
 		 return ResponseEntity.ok(id);

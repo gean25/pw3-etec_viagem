@@ -8,7 +8,7 @@ import br.com.etechoracio.etec_viagem.entity.Gasto;
 
 
 
-public interface GastoRepository extends JpaRepository<Gasto, Integer> {
+public interface GastoRepository extends JpaRepository<Gasto, Long> {
 
 	List<Gasto> findByViagemId(Long id);
 	

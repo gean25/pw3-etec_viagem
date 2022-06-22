@@ -1,4 +1,4 @@
-package br.com.etechoracio.etecviagem;
+package br.com.etechoracio.etec_viagem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

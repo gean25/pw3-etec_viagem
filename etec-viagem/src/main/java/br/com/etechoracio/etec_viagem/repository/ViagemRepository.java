@@ -6,7 +6,7 @@ import br.com.etechoracio.etec_viagem.entity.Viagem;
 
 
 
-public interface ViagemRepository extends JpaRepository<Viagem, Integer> {
+public interface ViagemRepository extends JpaRepository<Viagem, Long> {
 
 	
 }

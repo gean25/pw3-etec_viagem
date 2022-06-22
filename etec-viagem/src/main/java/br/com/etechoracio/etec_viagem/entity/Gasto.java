@@ -32,7 +32,7 @@ public class Gasto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID_GASTO")
-    private Integer id;
+    private Long id;
     
     @Column(name="TX_DESCRICAO")
     private String descricao;
