@@ -6,12 +6,17 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.etechoracio.etec_viagem.entity.Gasto;
+import br.com.etechoracio.etec_viagem.entity.Viagem;
 import br.com.etechoracio.etec_viagem.repository.GastoRepository;
+import br.com.etechoracio.etec_viagem.repository.ViagemRepository;
 
 public class GastoService {
 	
 	@Autowired
 	private GastoRepository gastorepository;
+	
+	@Autowired
+	private ViagemRepository viagemrepository;
 	
 	public List<Gasto> listarTodos() {
 		return gastorepository.findAll();
@@ -22,6 +27,14 @@ public class GastoService {
 	}
 	
 	public Gasto inserir(Gasto obj) {
+		Optional<Viagem> existe = viagemrepository.findById(obj.getViagem().getId());
+		if(!existe.isPresent()) {
+			throw new RuntimeException("Viagem não encontrada.");
+		}
+		existe.get();   
+		if(!existe.isPresent()) {
+			throw new RuntimeException("");
+		}
 		return gastorepository.save(obj);
 	}
 	
@@ -33,4 +46,6 @@ public class GastoService {
 		
 		return Optional.of(gastorepository.save(gasto));
 	}
+	
+	
 }
