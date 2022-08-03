@@ -31,10 +31,10 @@ public class GastoService {
 		if(!existe.isPresent()) {
 			throw new RuntimeException("Viagem não encontrada.");
 		}
-		existe.get();   
-		if(!existe.isPresent()) {
-			throw new RuntimeException("");
-		}
+		 if(existe.get().getChegada().isAfter(obj.getData()) || existe.get().getSaida().isBefore(obj.getData())) 
+		 {
+			throw new RuntimeException("Data Inválida");
+		 }   
 		return gastorepository.save(obj);
 	}
 	
@@ -43,7 +43,6 @@ public class GastoService {
 		if(!existe) {
 			return Optional.empty();
 		}
-		
 		return Optional.of(gastorepository.save(gasto));
 	}
 	
